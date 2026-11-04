@@ -1,12 +1,12 @@
 #include <Arduino.h>
-#include <Livre.h>
-#include <Membre.h>
-#include <bibli.h>
+#include "Livre.h"
+#include "Membre.h"
+#include "bibli.h"
 
 bibli::bibli() {
     for (int i = 0; i < 20; ++i) {
-        livres[i] = nullptr;
-        membres[i] = Membre();
+        livres[i] = 0;
+        membres[i] = Membre(-1);
         tableau_livres[i] = -1;
         tableau_membres[i] = -1;
     }
@@ -15,26 +15,17 @@ bibli::bibli() {
 }
 
 void bibli::ajouterMembre(int id) {
-    if (Serial.available() <= 0) {
-        return;
-    }
-
-    String nom = Serial.readStringUntil('\n');
-    nom.trim();
-
     for (int i = 0; i < 20; ++i) {
         if (tableau_membres[i] == -1) {
             tableau_membres[i] = id;
             membres[i] = Membre(id);
-            membres[i].setNom(nom);
             nombre_membres_actuel++;
-            Serial.print("Membre ajouté avec succès : ");
-            Serial.println(nom);
+            Serial.print("Membre ajouté avec succès, ID : ");
+            Serial.println(id);
             return;
         }
     }
-
-    Serial.println("La bibliothèque est pleine.");
+    Serial.println("La bibliothèque est pleine (membres).");
 }
 
 void bibli::ajouterLivre(int id) {
@@ -48,18 +39,96 @@ void bibli::ajouterLivre(int id) {
             return;
         }
     }
-
-    Serial.println("La bibliothèque est pleine.");
+    Serial.println("La bibliothèque est pleine (livres).");
 }
 
 void bibli::emprunterLivre(int id_livre, int id_membre) {
-  
+    int indexLivre = -1;
+    int indexMembre = -1;
+
+    for (int i = 0; i < 20; ++i) {
+        if (tableau_livres[i] == id_livre) {
+            indexLivre = i;
+            break;
+        }
+    }
+
+    for (int i = 0; i < 20; ++i) {
+        if (tableau_membres[i] == id_membre) {
+            indexMembre = i;
+            break;
+        }
+    }
+
+    if (indexLivre == -1) {
+        Serial.println("Erreur : Livre introuvable.");
+        return;
+    }
+
+    if (indexMembre == -1) {
+        Serial.println("Erreur : Membre introuvable.");
+        return;
+    }
+
+    if (livres[indexLivre] != 0) {
+        if (livres[indexLivre]->getEstEmprunte()) {
+            Serial.println("Erreur : Le livre est déjà emprunté.");
+            return;
+        }
+        
+        livres[indexLivre]->setEstEmprunte(true);
+        Serial.print("Le livre ");
+        Serial.print(id_livre);
+        Serial.print(" a été emprunté par le membre ");
+        Serial.println(id_membre);
+    }
 }
 
 void bibli::retournerLivre(int id_livre) {
-  
+    int indexLivre = -1;
+
+    for (int i = 0; i < 20; ++i) {
+        if (tableau_livres[i] == id_livre) {
+            indexLivre = i;
+            break;
+        }
+    }
+
+    if (indexLivre == -1) {
+        Serial.println("Erreur : Livre introuvable.");
+        return;
+    }
+
+    if (livres[indexLivre] != 0) {
+        if (!livres[indexLivre]->getEstEmprunte()) {
+            Serial.println("Erreur : Ce livre n'était pas emprunté.");
+            return;
+        }
+
+        livres[indexLivre]->setEstEmprunte(false);
+        Serial.print("Le livre ");
+        Serial.print(id_livre);
+        Serial.println(" a été retourné avec succès.");
+    }
 }
 
 void bibli::afficherEtat() {
-  
+    Serial.println("--- État de la bibliothèque ---");
+    if (nombre_livres_actuel == 0) {
+        Serial.println("Aucun livre dans la bibliothèque.");
+    } else {
+        for (int i = 0; i < 20; ++i) {
+            if (tableau_livres[i] != -1 && livres[i] != 0) {
+                Serial.print("Livre ID : ");
+                Serial.print(tableau_livres[i]);
+                Serial.print(" | Statut : ");
+                if (livres[i]->getEstEmprunte()) {
+                    Serial.println("Emprunté");
+                } else {
+                    Serial.println("Disponible");
+                }
+            }
+        }
+    }
+    Serial.println("------------------------------");
 }
