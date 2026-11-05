@@ -39,7 +39,7 @@ void bibli::ajouterLivre(int id) {
             return;
         }
     }
-    Serial.println("La bibliothèque est pleine (livres).");
+    Serial.println("La bibliothèque remplie");
 }
 
 void bibli::emprunterLivre(int id_livre, int id_membre) {
@@ -113,9 +113,9 @@ void bibli::retournerLivre(int id_livre) {
 }
 
 void bibli::afficherEtat() {
-    Serial.println("--- État de la bibliothèque ---");
+    Serial.println("état bibli");
     if (nombre_livres_actuel == 0) {
-        Serial.println("Aucun livre dans la bibliothèque.");
+        Serial.println("Aucun livre ");
     } else {
         for (int i = 0; i < 20; ++i) {
             if (tableau_livres[i] != -1 && livres[i] != 0) {
@@ -130,5 +130,4 @@ void bibli::afficherEtat() {
             }
         }
     }
-    Serial.println("------------------------------");
 }

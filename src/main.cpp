@@ -3,55 +3,47 @@
 #include "Membre.h"
 #include "bibli.h"
 
-// Instanciation de la bibliothèque
+
 bibli maBibliotheque;
 
 void setup() {
     Serial.begin(9600);
-    while (!Serial); // Attendre l'ouverture du moniteur série
-    
-    Serial.println("=== Systeme de gestion de bibliotheque initialise ===");
-    Serial.println("Commandes disponibles via le moniteur serie :");
-    Serial.println("- L <id_livre> : Ajouter un livre");
-    Serial.println("- M <id_membre> : Ajouter un membre");
-    Serial.println("- E <id_livre> <id_membre> : Emprunter un livre");
-    Serial.println("- R <id_livre> : Retourner un livre");
-    Serial.println("- A : Afficher l'etat de la bibliotheque");
-    Serial.println("--------------------------------------------------");
+    while (!Serial); 
+    Serial.println("1 Ajouter un livre");
+    Serial.println("2 Ajouter un membre");
+    Serial.println("3 Emprunter un livre");
+    Serial.println("4 Retourner un livre");
+    Serial.println("5 Afficher l'etat de la bibliotheque");
 }
 
 void loop() {
     if (Serial.available() > 0) {
         char commande = Serial.read();
         
-        // Ignorer les retours à la ligne ou espaces superflus
-        if (commande == '\n' || commande == '\r' || commande == ' ') {
-            return;
-        }
 
         switch (commande) {
-            case 'L': {
+            case '1': {
                 int idLivre = Serial.parseInt();
                 maBibliotheque.ajouterLivre(idLivre);
                 break;
             }
-            case 'M': {
+            case '2': {
                 int idMembre = Serial.parseInt();
                 maBibliotheque.ajouterMembre(idMembre);
                 break;
             }
-            case 'E': {
+            case '3': {
                 int idLivre = Serial.parseInt();
                 int idMembre = Serial.parseInt();
                 maBibliotheque.emprunterLivre(idLivre, idMembre);
                 break;
             }
-            case 'R': {
+            case '4': {
                 int idLivre = Serial.parseInt();
                 maBibliotheque.retournerLivre(idLivre);
                 break;
             }
-            case 'A': {
+            case '5': {
                 maBibliotheque.afficherEtat();
                 break;
             }

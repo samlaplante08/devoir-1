@@ -11,6 +11,12 @@ Membre::Membre(int id) {
     nom = "";
 }
 
-int Membre::getIdMembre() const { return id_membre; }
-String Membre::getNom() const { return nom; }
-void Membre::setNom(String nomMembre) { nom = nomMembre; }
+int Membre::getIdMembre() const {
+    return id_membre;
+ }
+String Membre::getNom() const{ 
+    return nom; 
+}
+void Membre::setNom(String nomMembre) {
+     nom = nomMembre; 
+}
